@@ -47,9 +47,7 @@ class VectorStore:
         if not self._client.collection_exists(self.collection_name):
             self._client.create_collection(
                 self.collection_name,
-                vectors_config=models.VectorParams(
-                    size=int(dim), distance=models.Distance.COSINE
-                ),
+                vectors_config=models.VectorParams(size=int(dim), distance=models.Distance.COSINE),
             )
 
     def reset(self) -> None:
@@ -88,9 +86,7 @@ class VectorStore:
         if total == 0:
             return []
         vector = self.embedding_fn([text])[0]
-        result = self._client.query_points(
-            self.collection_name, query=vector, limit=min(k, total)
-        )
+        result = self._client.query_points(self.collection_name, query=vector, limit=min(k, total))
         hits = []
         for point in result.points:
             payload = point.payload or {}

@@ -83,8 +83,11 @@ class Orchestrator:
             rounds = 0
             while True:
                 provider_used, message = await execute_chain(
-                    self.chain, messages, self.settings,
-                    json_schema=ASSISTANT_ANSWER_JSON_SCHEMA, **gen_kwargs,
+                    self.chain,
+                    messages,
+                    self.settings,
+                    json_schema=ASSISTANT_ANSWER_JSON_SCHEMA,
+                    **gen_kwargs,
                 )
                 if getattr(message, "tool_calls", None):
                     if rounds >= MAX_TOOL_ROUNDS:
@@ -93,11 +96,13 @@ class Orchestrator:
                         )
                         break
                     rounds += 1
-                    messages.append({
-                        "role": "assistant",
-                        "content": message.content or "",
-                        "tool_calls": [tc.model_dump() for tc in message.tool_calls],
-                    })
+                    messages.append(
+                        {
+                            "role": "assistant",
+                            "content": message.content or "",
+                            "tool_calls": [tc.model_dump() for tc in message.tool_calls],
+                        }
+                    )
                     for call in message.tool_calls:
                         try:
                             args = json.loads(call.function.arguments or "{}")

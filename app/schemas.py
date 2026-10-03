@@ -39,3 +39,31 @@ class ChatResponse(BaseModel):
     sources: list[Source] = Field(default_factory=list)
     tools_called: list[str] = Field(default_factory=list)
     latency_ms: int = 0
+
+
+class HistoryMessage(BaseModel):
+    role: str
+    content: str
+
+
+class AgentRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=8000)
+    history: list[HistoryMessage] = Field(default_factory=list)
+    enable_clearing: bool | None = None
+    fault_mode: str | None = None
+
+
+class AgentResponse(BaseModel):
+    answer: str
+    status: str  # answered | needs_clarification | unverified | failed
+    termination_reason: str
+    iterations: int
+    citations: list[str] = Field(default_factory=list)
+    confidence: str = "low"
+    evidence_sufficient: bool = False
+    provider_used: str = "none"
+    verification_failures: list[str] = Field(default_factory=list)
+    notes: list[dict] = Field(default_factory=list)
+    usage: dict = Field(default_factory=dict)
+    trajectory: dict = Field(default_factory=dict)
+    latency_ms: int = 0

@@ -93,3 +93,39 @@ sequenceDiagram
 - Cache keys hash message + flags + sampling params, so toggling RAG/tools misses deliberately.
 - Single uvicorn worker keeps the in-process cache/rate-limiter coherent; scale by running replicas behind a proxy (swap the in-memory pieces for Redis when you do).
 - The local model choice (1.5B, max_model_len 4096, KV-cache 4 GB) trades capability for demoable latency on CPU-only hardware.
+
+## W16: Agentic loop architecture
+
+```mermaid
+flowchart TD
+    Q["User query"] --> SYS["Build system prompt\n+ skills index + notes"]
+    SYS --> LLM["LLM call\n(tool_choice=auto)"]
+    LLM --> TC{"Tool calls\nreturned?"}
+    TC -->|Yes| EXEC["Execute tools\n(search_kb, calculator,\nread_doc, take_note, …)"]
+    EXEC --> CLEAR["Context clearing:\nreplace old tool results\nwith one-line summaries"]
+    CLEAR --> BUDGET{"Budget OK?\n(iterations, tokens)"}
+    BUDGET -->|Yes| LLM
+    BUDGET -->|No| STOP["Terminate:\nBUDGET_EXHAUSTED"]
+    TC -->|No: final_answer| VERIFY["Deterministic verifier:\ncitations ⊆ sources?\nevidence consistent?"]
+    VERIFY -->|Pass| DONE["Return AgentResult"]
+    VERIFY -->|Fail, retries left| LLM
+    VERIFY -->|Fail, no retries| UNVERIFIED["Return with\nANSWERED_UNVERIFIED"]
+```
+
+### Why a single-agent loop (not multi-agent)
+
+The W15 assistant's domain — a bounded internal knowledge base with deterministic tool outputs — does not exhibit the structural conditions that justify multi-agent coordination:
+
+1. **No role specialization** — one persona (research assistant) handles all queries.
+2. **No adversarial sub-tasks** — no planning vs. critique decomposition needed.
+3. **Bounded context** — the full corpus fits within a single agent's token budget.
+4. **Deterministic tools** — calculator, datetime, and KB search have no side effects requiring transactional coordination.
+5. **Evaluation simplicity** — a single trajectory is directly auditable; multi-agent message graphs would add observability cost with no capability gain.
+
+A single ReAct-style loop with a verification gate is the minimal sufficient architecture.
+
+### Context engineering: tool-result clearing
+
+After each iteration, tool results from earlier rounds are replaced with one-line summaries (e.g., `[search_knowledge_base → 3 passages retrieved]`). This prevents the context window from growing linearly with iteration count while preserving the agent's memory of what it already found. The `take_note` tool lets the agent explicitly persist facts across clearing boundaries.
+
+Ablation: running with `--no-clearing` shows ~40% higher token consumption with no accuracy gain on the 18-case golden set.

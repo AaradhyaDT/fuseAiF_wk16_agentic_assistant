@@ -1,0 +1,96 @@
+[
+  {
+    "case_id": "single_hop_01",
+    "category": "single_hop",
+    "passed": true,
+    "terminal_matched": true,
+    "tool_correctness": 0.667,
+    "trajectory_length": 3,
+    "over_long": false,
+    "prompt_tokens": 4694,
+    "completion_tokens": 547,
+    "reasoning_tokens": 134,
+    "total_tokens": 5375,
+    "cost_usd": 0.001113,
+    "failure": {
+      "case_id": "single_hop_01",
+      "category": "none",
+      "reason": "Success",
+      "root_cause_step": null,
+      "details": {}
+    },
+    "issues": []
+  },
+  {
+    "case_id": "single_hop_02",
+    "category": "single_hop",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 3,
+    "over_long": false,
+    "prompt_tokens": 3582,
+    "completion_tokens": 71,
+    "reasoning_tokens": 87,
+    "total_tokens": 3740,
+    "cost_usd": 0.000632,
+    "failure": {
+      "case_id": "single_hop_02",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 3,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required citation: 'deployment_runbook.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['2.0', '2.0 GiB', '2 GiB', '2GB']"
+    ]
+  },
+  {
+    "case_id": "single_hop_03",
+    "category": "single_hop",
+    "passed": true,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 2,
+    "over_long": false,
+    "prompt_tokens": 3206,
+    "completion_tokens": 208,
+    "reasoning_tokens": 98,
+    "total_tokens": 3512,
+    "cost_usd": 0.000665,
+    "failure": {
+      "case_id": "single_hop_03",
+      "category": "none",
+      "reason": "Success",
+      "root_cause_step": null,
+      "details": {}
+    },
+    "issues": []
+  },
+  {
+    "case_id": "multihop_01",
+    "category": "multihop",
+    "passed": true,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 6,
+    "over_long": true,
+    "prompt_tokens": 11308,
+    "completion_tokens": 439,
+    "reasoning_tokens": 614,
+    "total_tokens": 12361,
+    "cost_usd": 0.002328,
+    "failure": {
+      "case_id": "multihop_01",
+      "category": "none",
+      "reason": "Success",
+      "root_cause_step": null,
+      "details": {}
+    },
+    "issues": []
+  }
+]

@@ -48,6 +48,22 @@ class Settings(BaseSettings):
     cache_ttl_s: int = 300
     cache_max_items: int = 512
 
+    # --- W16 agentic loop -------------------------------------------------
+    agent_max_iterations: int = 8
+    agent_max_tool_calls_per_iter: int = 4
+    agent_max_total_tokens: int = 60_000
+    agent_tool_timeout_s: float = 10.0
+    agent_max_verification_retries: int = 2
+    agent_enable_clearing: bool = True
+    agent_keep_last_tool_rounds: int = 1
+    agent_retrieval_k: int = 4
+    agent_min_relevance: float = 0.15
+    agent_snippet_chars: int = 600
+    agent_notes_max_chars: int = 1500
+    agent_prompt_version: str = "v1"
+    agent_fault_mode: str = ""
+    skills_dir: str = "skills"
+
 
 @lru_cache
 def get_settings() -> Settings:
