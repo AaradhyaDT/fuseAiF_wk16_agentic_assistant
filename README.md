@@ -1,6 +1,8 @@
-# WK15 — AI Assistant with RAG, Tool Calling & Local vLLM Fallback
+# WK16 — Agentic AI Assistant with Verified Loop, Context Engineering & Custom Eval Harness
 
-Production-style AI assistant covering **both W15 tasks**: Task 1 (assistant with LLM API, prompt engineering, structured output, tool calling, RAG, local vLLM serving, Docker) and Task 2 (web UI, performance engineering, caching, retries, rate limiting, fallback provider, graceful degradation).
+> Built on the [W15 foundation](https://github.com/AaradhyaDT/fuseAiF_wk15_ai_assistant_rag) — extends the fixed-pipeline RAG assistant into a verified agentic loop with autonomous multi-hop reasoning, context engineering, and a custom evaluation harness.
+
+Production-style AI assistant covering **W15 tasks** (RAG, tool calling, provider fallback, Docker) plus **W16 Task 3**: agentic loop with verification gate, context-window management, failure injection, and a from-scratch evaluation harness.
 
 ## Architecture
 
@@ -62,6 +64,8 @@ The API reaches it at `http://localhost:11434/v1` natively, or `host.docker.inte
 | POST   | `/ingest`  | Re-index `data/docs/` into the Qdrant collection |
 | GET    | `/health`  | Uptime, indexed-doc count, per-provider breaker state |
 | GET    | `/tools`   | OpenAI-format tool specs                       |
+| POST   | `/agent`   | `{query, history?}` → `AgentResponse` with trajectory |
+| GET    | `/agent/tools` | Agent tool specs with rationale fields      |
 
 ```powershell
 curl -X POST http://localhost:8000/chat -H "Content-Type: application/json" `
@@ -134,3 +138,52 @@ All settings are env-driven (see `.env.example`): provider order, models, timeou
 ## Deployment notes (bonus)
 
 Compose file deploys as-is to any Linux VM with Docker. For Azure Container Apps: `az containerapp up --source .` with the same image, or push to ACR and reference from a Container App environment; set `GEMINI_API_KEY` as a secret. Not executed here to keep the deliverable reproducible offline.
+
+---
+
+## W16 — Task 3: Agentify the Assistant
+
+### a) Context Engineering Technique
+
+**Tool-result clearing with explicit note-taking.** After each agentic iteration, raw tool outputs from previous rounds are replaced with one-line summaries (e.g., `[search_knowledge_base → 3 passages]`). The agent retains awareness of what it already retrieved without paying the token cost of carrying full passages forward. When a fact must survive clearing, the agent calls `take_note` to persist it in a dedicated scratchpad injected into every system prompt. This keeps context growth O(1) per iteration instead of O(n).
+
+### b) Agentic Pattern: Single-Agent Verified Loop
+
+**Why a fixed pipeline is insufficient (one sentence):** The W15 single-pass orchestrator cannot recover from partial retrieval misses, resolve conflicts between superseded documents, or verify its own citations — all of which require iterative re-planning that only a dynamic loop provides.
+
+**Pattern choice:** Single-agent ReAct loop with a deterministic verification gate. The assistant's domain (bounded KB, deterministic tools, single persona) lacks the structural conditions that justify multi-agent coordination: no role specialization, no adversarial sub-tasks, bounded context, no side-effecting tools, and single-trajectory auditability. Adding agent-to-agent messaging would increase latency and observability cost with zero capability gain.
+
+The loop runs up to 8 iterations with budget guards (iteration cap, token cap, repeat-call detection). After the model emits `final_answer`, a deterministic verifier checks: (1) all cited sources ⊆ retrieved sources, and (2) `evidence_sufficient` is consistent with retrieval results. Failures trigger a retry with feedback (up to 2 retries) before accepting an `ANSWERED_UNVERIFIED` result.
+
+### c) Evaluation Harness (built from scratch)
+
+18 golden test cases across 6 categories (`single_hop`, `multihop`, `conflict`, `numeric`, `unanswerable`, `ambiguous`), executed via `python -m eval.harness`.
+
+| Metric | Definition |
+|---|---|
+| **Task Completion Rate** | % of cases where `final_answer` passes all correctness checks |
+| **Tool-Call Correctness** | Fraction of tool invocations using valid tools with valid arguments |
+| **Trajectory Length** | Number of LLM iterations per query (lower = more efficient) |
+| **Failure Taxonomy** | Hard (crash/budget), Soft (wrong answer), Cascading Soft (tool error → wrong answer) |
+| **Token Accounting** | Per-query prompt/completion/reasoning token counts + USD cost |
+
+Results: see [`eval/results/REPORT.md`](eval/results/REPORT.md).
+
+#### Empirical Evaluation Summary
+
+| Architecture | Task Completion | Mean Iters | Total Tokens | Cost ($) | Conflict Resolution | Verification Gate |
+|---|---|---|---|---|---|---|
+| **W15 Classic RAG (Baseline)** | 0.0% (0/4) | 1.0 | 2,568 | $0.0006 | ❌ Fails on superseded docs | ❌ None |
+| **W16 Verified Agent (Ours)** | **75.0%** (3/4)* | **3.50** | 24,988 (9.7x) | $0.0047 | ✅ Full precedence enforcement | ✅ Deterministic check |
+
+*\*Note: 1 failure due to external cloud rate-limit ceiling during live multi-turn run. In offline test suite, passes 100% (52/52 tests).*
+
+### Additional Requirements
+
+**Skill vs. Agent:** A *skill* (`skills/conflict-resolution/SKILL.md`) is a static instruction document loaded into the system prompt on demand — it costs tokens but zero latency. An *agent* is a runtime loop that makes autonomous decisions. Skills inform agent behavior without adding coordination overhead.
+
+**Per-query token accounting:** Every `AgentResult` records `prompt_tokens`, `completion_tokens`, `reasoning_tokens`, and `cost_usd` per LLM call, aggregated across the full trajectory. The evaluation harness reports totals and per-query breakdowns.
+
+**Failure injection:** Three fault modes test resilience: `tool_unavailable` (removes a tool mid-run), `malformed_retrieval` (corrupts search results), and `timeout` (delays tool execution past the deadline). Run via `python -m eval.harness --fault tool_unavailable`.
+
+**Tool vs. Agent boundary:** `calculator` and `current_datetime` are bounded tools — fixed input/output contracts, deterministic, sub-millisecond. `search_knowledge_base` is also a tool (stateless vector lookup), but the *decision* of whether to search again, cross-reference results, or ask the user is the agent's job. The boundary: if the operation has a fixed contract and no planning, it's a tool; if it requires dynamic re-planning based on intermediate results, it belongs in the agent loop.

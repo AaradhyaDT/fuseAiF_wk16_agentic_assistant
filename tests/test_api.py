@@ -99,7 +99,13 @@ def test_chat_degrades_gracefully_when_all_providers_down(tmp_path):
         async def complete(self, messages, **kwargs):
             raise RuntimeError("outage")
 
-    settings = Settings(_env_file=None, gemini_api_key="", retry_attempts=1, retry_backoff_s=0.001, qdrant_path=str(tmp_path / "qdrant"))
+    settings = Settings(
+        _env_file=None,
+        gemini_api_key="",
+        retry_attempts=1,
+        retry_backoff_s=0.001,
+        qdrant_path=str(tmp_path / "qdrant"),
+    )
     app = create_app(settings, embedding_fn=BagOfWordsEmbedder())
     app.state.orchestrator.chain = [BrokenProvider()]
     client = TestClient(app)
@@ -107,3 +113,60 @@ def test_chat_degrades_gracefully_when_all_providers_down(tmp_path):
     assert body["provider_used"] == "none"
     assert body["degraded"] is True
     assert "unavailable" in body["answer"]
+
+
+def test_agent_endpoint_returns_structured_response(tmp_path):
+    class AgentStubProvider:
+        name = "agent_stub"
+
+        def __init__(self):
+            self.breaker = CircuitBreaker("agent_stub")
+
+        async def complete_raw(self, messages, **kwargs):
+            class _Call:
+                id = "call_1"
+                function = type(
+                    "Fn",
+                    (),
+                    {
+                        "name": "final_answer",
+                        "arguments": json.dumps(
+                            {
+                                "answer": "Agent answer.",
+                                "citations": [],
+                                "confidence": "high",
+                                "evidence_sufficient": False,
+                                "rationale": "done",
+                            }
+                        ),
+                    },
+                )()
+
+                def model_dump(self):
+                    return {
+                        "id": self.id,
+                        "type": "function",
+                        "function": {
+                            "name": self.function.name,
+                            "arguments": self.function.arguments,
+                        },
+                    }
+
+            msg = type("Msg", (), {"content": None, "tool_calls": [_Call()]})()
+            usage = {"prompt_tokens": 50, "completion_tokens": 20, "total_tokens": 70}
+            return msg, usage
+
+    settings = Settings(_env_file=None, gemini_api_key="", qdrant_path=str(tmp_path / "qdrant"))
+    app = create_app(settings, embedding_fn=BagOfWordsEmbedder())
+    app.state.agent_loop.providers = [AgentStubProvider()]
+    client = TestClient(app)
+
+    resp = client.post("/agent", json={"message": "hello agent"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["answer"] == "Agent answer."
+    assert body["status"] == "answered"
+    assert body["termination_reason"] == "answered"
+    assert body["iterations"] == 1
+    assert "trajectory" in body
+    assert body["usage"]["total_tokens"] == 70

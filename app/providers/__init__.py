@@ -60,19 +60,43 @@ def build_providers(settings: Settings) -> list[LLMProvider]:
     return ordered
 
 
+def estimate_usage(messages: list[dict[str, Any]], message: Any) -> dict[str, int]:
+    """Rough chars/4 token estimate for providers that do not report usage (test stubs)."""
+    prompt_chars = sum(len(str(m.get("content") or "")) for m in messages)
+    completion_chars = len(str(getattr(message, "content", "") or ""))
+    for call in getattr(message, "tool_calls", None) or []:
+        completion_chars += len(str(getattr(call.function, "arguments", "") or ""))
+    prompt, completion = prompt_chars // 4, completion_chars // 4
+    return {
+        "prompt_tokens": prompt,
+        "completion_tokens": completion,
+        "reasoning_tokens": 0,
+        "total_tokens": prompt + completion,
+        "estimated": 1,
+    }
+
+
 async def execute_chain(
     providers: list[_ProviderLike],
     messages: list[dict[str, Any]],
     settings: Settings,
+    *,
+    with_usage: bool = False,
     **gen_kwargs: Any,
-) -> tuple[str, Any]:
-    """Walk the fallback chain; first healthy provider wins."""
+) -> tuple[Any, ...]:
+    """Walk the fallback chain; first healthy provider wins.
+
+    Returns ``(provider_name, message)`` or, with ``with_usage=True``,
+    ``(provider_name, message, usage)``.
+    """
     errors: dict[str, str] = {}
     for provider in providers:
+        raw = getattr(provider, "complete_raw", None) if with_usage else None
+        fn = raw or provider.complete
         try:
-            message = await with_retries(
-                lambda p=provider: p.breaker.call(
-                    p.complete,
+            result = await with_retries(
+                lambda p=provider, f=fn: p.breaker.call(
+                    f,
                     messages,
                     temperature=settings.temperature,
                     top_p=settings.top_p,
@@ -83,7 +107,13 @@ async def execute_chain(
                 backoff_s=settings.retry_backoff_s,
                 retry_on=TRANSIENT_ERRORS,
             )
-            return provider.name, message
+            if not with_usage:
+                return provider.name, result
+            if raw is not None:
+                message, usage = result
+            else:
+                message, usage = result, estimate_usage(messages, result)
+            return provider.name, message, usage
         except Exception as exc:
             errors[provider.name] = f"{type(exc).__name__}: {exc}"
             logger.warning("provider %s failed: %s", provider.name, errors[provider.name])

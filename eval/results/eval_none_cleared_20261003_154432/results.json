@@ -1,0 +1,526 @@
+[
+  {
+    "case_id": "single_hop_01",
+    "category": "single_hop",
+    "passed": true,
+    "terminal_matched": true,
+    "tool_correctness": 0.667,
+    "trajectory_length": 4,
+    "over_long": true,
+    "prompt_tokens": 6890,
+    "completion_tokens": 535,
+    "reasoning_tokens": 213,
+    "total_tokens": 7638,
+    "cost_usd": 0.001482,
+    "failure": {
+      "case_id": "single_hop_01",
+      "category": "none",
+      "reason": "Success",
+      "root_cause_step": null,
+      "details": {}
+    },
+    "issues": []
+  },
+  {
+    "case_id": "single_hop_02",
+    "category": "single_hop",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 2,
+    "over_long": false,
+    "prompt_tokens": 1388,
+    "completion_tokens": 46,
+    "reasoning_tokens": 56,
+    "total_tokens": 1490,
+    "cost_usd": 0.000269,
+    "failure": {
+      "case_id": "single_hop_02",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 2,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required citation: 'deployment_runbook.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['2.0', '2.0 GiB', '2 GiB', '2GB']"
+    ]
+  },
+  {
+    "case_id": "single_hop_03",
+    "category": "single_hop",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "single_hop_03",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required citation: 'incident_2026_08_postmortem.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['INC-4091', '4091']",
+      "Answer missing mandatory keyword from group: ['burst', '429', 'rate limit', 'circuit breaker']"
+    ]
+  },
+  {
+    "case_id": "multihop_01",
+    "category": "multihop",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "multihop_01",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required citation: 'incident_2026_08_postmortem.md' (cited: [])",
+      "Missing required citation: 'release_notes.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['60', '60 RPM']",
+      "Answer missing mandatory keyword from group: ['20', 'burst of 20']"
+    ]
+  },
+  {
+    "case_id": "multihop_02",
+    "category": "multihop",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "multihop_02",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required citation: 'provider_pricing.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['MiniLM', 'all-MiniLM-L6-v2']",
+      "Answer missing mandatory keyword from group: ['240 MB', '240MB']"
+    ]
+  },
+  {
+    "case_id": "multihop_03",
+    "category": "multihop",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "multihop_03",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required citation: 'provider_pricing.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['0.60', '$0.60']",
+      "Answer missing mandatory keyword from group: ['3.778', '$3.78', '3.78']"
+    ]
+  },
+  {
+    "case_id": "multihop_04",
+    "category": "multihop",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "multihop_04",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required citation: 'deployment_runbook.md' (cited: [])",
+      "Missing required citation: 'wk15_project.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['50,000', '50000']",
+      "Answer missing mandatory keyword from group: ['384', '384 dims', '384-dimensional']"
+    ]
+  },
+  {
+    "case_id": "conflict_01",
+    "category": "conflict",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "conflict_01",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required citation: 'release_notes.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['8192', '8,192']",
+      "Answer missing mandatory keyword from group: ['4096', '4,096', 'superseded', 'bumped', 'outdated']"
+    ]
+  },
+  {
+    "case_id": "conflict_02",
+    "category": "conflict",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "conflict_02",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required citation: 'release_notes.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['8002']",
+      "Answer missing mandatory keyword from group: ['8001']"
+    ]
+  },
+  {
+    "case_id": "conflict_03",
+    "category": "conflict",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "conflict_03",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required citation: 'release_notes.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['250']",
+      "Answer missing mandatory keyword from group: ['100']"
+    ]
+  },
+  {
+    "case_id": "numeric_01",
+    "category": "numeric",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "numeric_01",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required tool call: 'calculator'",
+      "Missing required citation: 'provider_pricing.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['0.855', '$0.855', '0.86']"
+    ]
+  },
+  {
+    "case_id": "numeric_02",
+    "category": "numeric",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "numeric_02",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required tool call: 'calculator'",
+      "Missing required citation: 'provider_pricing.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['8.16', '$8.16']"
+    ]
+  },
+  {
+    "case_id": "numeric_03",
+    "category": "numeric",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "numeric_03",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Missing required tool call: 'calculator'",
+      "Missing required citation: 'provider_pricing.md' (cited: [])",
+      "Answer missing mandatory keyword from group: ['3.30', '$3.30', '3.3']"
+    ]
+  },
+  {
+    "case_id": "unanswerable_01",
+    "category": "unanswerable",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "unanswerable_01",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'"
+    ]
+  },
+  {
+    "case_id": "unanswerable_02",
+    "category": "unanswerable",
+    "passed": false,
+    "terminal_matched": true,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "unanswerable_02",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Missing required tool call: 'search_knowledge_base'",
+      "Answer missing mandatory keyword from group: ['not documented', 'no information', 'not found', 'does not specify', 'cannot find', 'not available']"
+    ]
+  },
+  {
+    "case_id": "ambiguous_01",
+    "category": "ambiguous",
+    "passed": false,
+    "terminal_matched": false,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "ambiguous_01",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Expected terminal 'ask_user', got 'final_answer' (failed)",
+      "Missing required tool call: 'ask_user'",
+      "Answer missing mandatory keyword from group: ['?', 'which', 'environment', 'where', 'Docker', 'cloud', 'specify']"
+    ]
+  },
+  {
+    "case_id": "ambiguous_02",
+    "category": "ambiguous",
+    "passed": false,
+    "terminal_matched": false,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "ambiguous_02",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Expected terminal 'ask_user', got 'final_answer' (failed)",
+      "Missing required tool call: 'ask_user'",
+      "Answer missing mandatory keyword from group: ['?', 'which', 'quantization', 'vLLM', 'ONNX', 'what type', 'specify']"
+    ]
+  },
+  {
+    "case_id": "ambiguous_03",
+    "category": "ambiguous",
+    "passed": false,
+    "terminal_matched": false,
+    "tool_correctness": 1.0,
+    "trajectory_length": 1,
+    "over_long": false,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 0,
+    "cost_usd": 0.0,
+    "failure": {
+      "case_id": "ambiguous_03",
+      "category": "hard",
+      "reason": "Hard termination: provider_failure",
+      "root_cause_step": null,
+      "details": {
+        "iterations": 1,
+        "termination_reason": "provider_failure"
+      }
+    },
+    "issues": [
+      "Expected terminal 'ask_user', got 'final_answer' (failed)",
+      "Missing required tool call: 'ask_user'",
+      "Answer missing mandatory keyword from group: ['?', 'how many', 'token volume', 'workload', 'queries', 'specify']"
+    ]
+  }
+]
